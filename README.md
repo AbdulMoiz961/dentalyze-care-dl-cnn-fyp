@@ -40,10 +40,10 @@ Dental panoramic radiographs (orthopantomograms, OPGs) serve as a standard diagn
 
 | Class ID | Pathology | Clinical Definition |
 |:--------:|:--------------------|:-------------------------------------------------------------|
-| 1 | **Caries** | Localized demineralization and structural decay of enamel and dentin |
-| 2 | **Deep Caries** | Extensive carious lesion advancing into close proximity with or exposing the pulp |
-| 3 | **Periapical Lesion** | Periapical radiolucency indicating inflammatory or cystic changes at the tooth root apex |
-| 4 | **Impacted Tooth** | Dentition prevented from erupting into anatomical position due to physical obstruction |
+| 1 | 🟢 **Caries** | Localized demineralization and structural decay of enamel and dentin |
+| 2 | 🔴 **Deep Caries** | Extensive carious lesion advancing into close proximity with or exposing the pulp |
+| 3 | 🟠 **Periapical Lesion** | Periapical radiolucency indicating inflammatory or cystic changes at the tooth root apex |
+| 4 | 🔵 **Impacted Tooth** | Dentition prevented from erupting into anatomical position due to physical obstruction |
 
 The system processes input radiographs using a fine-tuned **Faster R-CNN (ResNet-50-FPN)** neural network, scales bounding box predictions back to the native radiograph resolution, and generates structured clinical summaries alongside an interactive viewer with color-coded diagnostic overlays.
 
@@ -85,10 +85,10 @@ The system processes input radiographs using a fine-tuned **Faster R-CNN (ResNet
 
 - **Automated Pathology Detection**: Object detection model localizes multiple pathologies concurrently with class confidence probabilities.
 - **Radiographic Visual Overlays**: Bounding boxes are superimposed directly onto radiographs with standardized color-coding:
-  - Caries: Green (`#10B981`)
-  - Deep Caries: Red (`#EF4444`)
-  - Periapical Lesion: Orange (`#F97316`)
-  - Impacted Tooth: Blue (`#3B82F6`)
+  - 🟢 Caries: Green (`#10B981`)
+  - 🔴 Deep Caries: Red (`#EF4444`)
+  - 🟠 Periapical Lesion: Orange (`#F97316`)
+  - 🔵 Impacted Tooth: Blue (`#3B82F6`)
 - **Structured Clinical Reporting**: Synthesizes identified lesions, tooth locations, and qualitative risk indicators into clear documentation.
 - **Diagnostic PDF Generation**: Exportable clinical reports including annotated radiographs, patient records, and customizable practice metadata.
 - **Role-Based Access Control**: Tailored workflows for dental practitioners (longitudinal patient charts, multi-study comparison) and individual patients.
@@ -120,10 +120,10 @@ The Faster R-CNN model was evaluated on a held-out validation cohort of **46 rad
 
 | Disease Class | Ground Truth | Predicted | TP | FP | FN | Precision | Recall | F1-Score | Mean IoU |
 |:-------------------|:---:|:----:|:---:|:---:|:---:|:---------:|:---------:|:--------:|:--------:|
-| **Impacted Tooth**  | 40  | 49   | 34  | 15  | 6   | **69.4%** | **85.0%** | **76.4%**| 0.817    |
-| **Dental Caries**   | 101 | 137  | 46  | 91  | 55  | **33.6%** | **45.5%** | **38.7%**| 0.861    |
-| **Periapical Lesion**| 9  | 6    | 3   | 3   | 6   | **50.0%** | **33.3%** | **40.0%**| 0.800    |
-| **Deep Caries**     | 32  | 28   | 11  | 17  | 21  | **39.3%** | **34.4%** | **36.7%**| 0.827    |
+| 🔵 **Impacted Tooth**  | 40  | 49   | 34  | 15  | 6   | **69.4%** | **85.0%** | **76.4%**| 0.817    |
+| 🟢 **Dental Caries**   | 101 | 137  | 46  | 91  | 55  | **33.6%** | **45.5%** | **38.7%**| 0.861    |
+| 🟠 **Periapical Lesion**| 9  | 6    | 3   | 3   | 6   | **50.0%** | **33.3%** | **40.0%**| 0.800    |
+| 🔴 **Deep Caries**     | 32  | 28   | 11  | 17  | 21  | **39.3%** | **34.4%** | **36.7%**| 0.827    |
 
 #### Performance Analysis
 

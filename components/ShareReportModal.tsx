@@ -1,0 +1,149 @@
+
+import React, { useState, useEffect } from 'react';
+import { AnalysisHistoryItem } from '../types';
+import { LoadingSpinner } from './LoadingSpinner';
+
+interface ShareReportModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  pdfBlobUrl?: string | null; // For newly generated PDF in ImageAnalyzer
+  pdfFilename?: string; // For newly generated PDF
+  historyItem?: AnalysisHistoryItem | null; // For sharing historical PDF
+  onInitiatePdfDownload?: (item: AnalysisHistoryItem) => Promise<{blob: Blob, filename: string} | null>; // Function to generate/download PDF for history item
+  reportSummary: string;
+}
+
+const DownloadIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}><path strokeLinecap="round" strokeLinejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" /></svg>
+);
+const EmailIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => (
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" {...props}><path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>
+);
+const WhatsAppIcon: React.FC<React.SVGProps<SVGSVGElement>> = (props) => ( // Basic placeholder
+    <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" {...props}><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.149-.173.198-.297.297-.495.099-.198.05-.372-.025-.521-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.47.074-.742.347-.272.272-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.626.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+);
+
+
+export const ShareReportModal: React.FC<ShareReportModalProps> = ({
+  isOpen,
+  onClose,
+  pdfBlobUrl: initialPdfBlobUrl, // URL if PDF already generated (e.g. new analysis)
+  pdfFilename: initialPdfFilename, // Filename if PDF already generated
+  historyItem, // If sharing from history
+  onInitiatePdfDownload, // Function to generate/download PDF for history item
+  reportSummary,
+}) => {
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [currentPdfBlobUrl, setCurrentPdfBlobUrl] = useState<string | null>(initialPdfBlobUrl || null);
+  const [currentPdfFilename, setCurrentPdfFilename] = useState<string>(initialPdfFilename || 'DentalReport.pdf');
+  const [error, setError] = useState<string | null>(null);
+
+  const handleDownload = async () => {
+    setError(null);
+    if (currentPdfBlobUrl) { // If PDF already available (e.g., from ImageAnalyzer)
+      const link = document.createElement('a');
+      link.href = currentPdfBlobUrl;
+      link.download = currentPdfFilename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      // Note: initialPdfBlobUrl should be revoked by the caller (ImageAnalyzer) on modal close
+    } else if (historyItem && onInitiatePdfDownload) { // If it's a history item, generate it
+      setIsGenerating(true);
+      const pdfData = await onInitiatePdfDownload(historyItem);
+      setIsGenerating(false);
+      if (pdfData) {
+        const url = URL.createObjectURL(pdfData.blob);
+        setCurrentPdfBlobUrl(url); // Store for potential re-download within this modal session
+        setCurrentPdfFilename(pdfData.filename);
+        
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = pdfData.filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        // URL.revokeObjectURL(url); // Revoke immediately after download if only one download is needed from this action
+      } else {
+        setError("Failed to generate PDF for download.");
+      }
+    }
+  };
+  
+  // Clean up blob URL when modal is closed if it was generated by this modal
+  useEffect(() => {
+    return () => {
+      if (currentPdfBlobUrl && !initialPdfBlobUrl) { // Only revoke if generated by this modal
+        URL.revokeObjectURL(currentPdfBlobUrl);
+      }
+    };
+  }, [currentPdfBlobUrl, initialPdfBlobUrl]);
+
+
+  if (!isOpen) return null;
+
+  const emailSubject = "Dental X-Ray Analysis Report";
+  const emailBody = `Please find the dental report summary below. If a PDF was generated, please download it and attach it to your email.\n\nSummary:\n${reportSummary}`;
+  const whatsappText = `Check out this dental report summary: ${reportSummary}. I can send you the PDF if you'd like.`;
+
+  return (
+    <div className="fixed inset-0 z-[100] bg-slate-900/80 backdrop-blur-md flex items-center justify-center p-4 transition-opacity duration-300 ease-in-out" role="dialog" aria-modal="true" aria-labelledby="share-report-modal-title">
+      <div className="bg-slate-800 p-6 sm:p-8 rounded-xl shadow-2xl w-full max-w-md border border-slate-700 transform transition-all duration-300 ease-out scale-100">
+        <div className="flex justify-between items-center mb-6">
+          <h2 id="share-report-modal-title" className="text-xl sm:text-2xl font-display font-semibold text-purple-300">
+            Share Analysis Report
+          </h2>
+          <button
+            onClick={onClose}
+            className="text-slate-400 hover:text-slate-200 transition-colors p-1 rounded-full focus:outline-none focus:ring-2 focus:ring-purple-500"
+            aria-label="Close modal"
+            disabled={isGenerating}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        {error && <p className="text-red-400 text-sm mb-4">{error}</p>}
+
+        <div className="space-y-4">
+          <button
+            onClick={handleDownload}
+            disabled={isGenerating || !(currentPdfBlobUrl || (historyItem && onInitiatePdfDownload))}
+            className="w-full flex items-center justify-center px-6 py-3 text-base font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg shadow-md transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:bg-slate-500 disabled:cursor-not-allowed"
+          >
+            {isGenerating ? <LoadingSpinner size="sm" /> : <DownloadIcon className="w-5 h-5 mr-2.5" />}
+            {isGenerating ? 'Preparing PDF...' : (currentPdfBlobUrl || (historyItem && onInitiatePdfDownload)) ? 'Download PDF' : 'PDF Not Available'}
+          </button>
+
+          <a
+            href={`mailto:?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`}
+            target="_blank" rel="noopener noreferrer"
+            className="w-full flex items-center justify-center px-6 py-3 text-base font-medium text-white bg-teal-600 hover:bg-teal-700 rounded-lg shadow-md transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-teal-400"
+          >
+            <EmailIcon className="w-5 h-5 mr-2.5" /> Share via Email
+          </a>
+           <p className="text-xs text-slate-400 text-center italic"> (You'll need to manually attach the downloaded PDF to the email.)</p>
+
+          <a
+            href={`https://wa.me/?text=${encodeURIComponent(whatsappText)}`}
+            target="_blank" rel="noopener noreferrer"
+            className="w-full flex items-center justify-center px-6 py-3 text-base font-medium text-white bg-green-600 hover:bg-green-700 rounded-lg shadow-md transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-green-400"
+          >
+            <WhatsAppIcon className="w-5 h-5 mr-2.5" /> Share via WhatsApp
+          </a>
+          <p className="text-xs text-slate-400 text-center italic"> (You can send the downloaded PDF as an attachment in WhatsApp.)</p>
+        </div>
+
+        <button
+            onClick={onClose}
+            disabled={isGenerating}
+            className="mt-8 w-full px-6 py-2.5 text-sm font-medium text-slate-300 bg-slate-600 hover:bg-slate-500 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400 disabled:opacity-60"
+        >
+            Close
+        </button>
+      </div>
+    </div>
+  );
+};

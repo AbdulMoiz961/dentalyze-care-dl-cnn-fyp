@@ -1,0 +1,30 @@
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# SQLite databases
+*.db
+*.sqlite
+*.sqlite3
+
+# Uploads and temporary files
+uploads/
+evaluation_results/
+
+# Environment variables
+.env
+
+# PyTorch checkpoints (large files)
+trained_models/*.pth
+!trained_models/README.md
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/

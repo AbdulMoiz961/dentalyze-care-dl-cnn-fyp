@@ -1,0 +1,6 @@
+{
+  "name": "Dentalyze Care",
+  "description": "An intelligent dental X-ray analyzer using Gemini API for accurate and efficient dental health assessment. Upload an X-ray image to identify potential dental issues such as cavities, periodontal disease, and periapical abscesses.",
+  "requestFramePermissions": [],
+  "prompt": ""
+}

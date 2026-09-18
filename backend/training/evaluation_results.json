@@ -1,0 +1,58 @@
+{
+  "mAP@0.50": 0.4807,
+  "Overall Precision": 0.4273,
+  "Overall Recall": 0.5165,
+  "Overall F1-Score": 0.4677,
+  "Mean IoU": 0.8393,
+  "Total Test Images": 46,
+  "Total Ground Truth Lesions": 182,
+  "Total Detected Lesions": 220,
+  "Avg Inference Time": "6517.7 ms/image (0.2 FPS)",
+  "Device": "cpu",
+  "Class Metrics": {
+    "Impacted Tooth": {
+      "Ground Truth": 40,
+      "Predicted": 49,
+      "True Positives (TP)": 34,
+      "False Positives (FP)": 15,
+      "False Negatives (FN)": 6,
+      "Precision": 0.6939,
+      "Recall": 0.85,
+      "F1-Score": 0.764,
+      "Avg IoU": 0.8173
+    },
+    "Dental Caries": {
+      "Ground Truth": 101,
+      "Predicted": 137,
+      "True Positives (TP)": 46,
+      "False Positives (FP)": 91,
+      "False Negatives (FN)": 55,
+      "Precision": 0.3358,
+      "Recall": 0.4554,
+      "F1-Score": 0.3866,
+      "Avg IoU": 0.8611
+    },
+    "Periapical Lesion": {
+      "Ground Truth": 9,
+      "Predicted": 6,
+      "True Positives (TP)": 3,
+      "False Positives (FP)": 3,
+      "False Negatives (FN)": 6,
+      "Precision": 0.5,
+      "Recall": 0.3333,
+      "F1-Score": 0.4,
+      "Avg IoU": 0.7999
+    },
+    "Deep Caries": {
+      "Ground Truth": 32,
+      "Predicted": 28,
+      "True Positives (TP)": 11,
+      "False Positives (FP)": 17,
+      "False Negatives (FN)": 21,
+      "Precision": 0.3929,
+      "Recall": 0.3438,
+      "F1-Score": 0.3667,
+      "Avg IoU": 0.8269
+    }
+  }
+}

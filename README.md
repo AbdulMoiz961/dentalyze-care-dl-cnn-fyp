@@ -241,7 +241,7 @@ Dentalyze Care/
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/Dentalyze-Care.git
+git clone https://github.com/AbdulMoiz961/dentalyze-care-dl-cnn-fyp.git
 cd Dentalyze-Care
 ```
 

@@ -11,6 +11,10 @@
 
 > An end-to-end web application that leverages a **Faster R-CNN** deep learning architecture trained on the [DENTEX Challenge](https://dentex.grand-challenge.org/) dataset to automatically detect, classify, and localize dental pathologies from panoramic radiographs (orthopantomograms).
 
+<p align="center">
+  <img src="docs/images/hero-landing.png" alt="Dentalyze Care User Interface" width="100%"/>
+</p>
+
 ---
 
 ## Table of Contents
@@ -94,6 +98,12 @@ The system processes input radiographs using a fine-tuned **Faster R-CNN (ResNet
 - **Role-Based Access Control**: Tailored workflows for dental practitioners (longitudinal patient charts, multi-study comparison) and individual patients.
 - **Interactive Radiograph Viewer**: Full pan, zoom, and layer toggles for detailed examination of low-contrast bone and enamel structures.
 - **Secure Architecture**: Stateless JSON Web Token (JWT) authorization backed by SQLAlchemy relational persistence.
+
+<p align="center">
+  <img src="docs/images/analysis-report.png" alt="Dental Analysis Report and Radiograph Overlays" width="75%"/>
+  <br/>
+  <em>Figure: Automated pathology report displaying localized Faster R-CNN bounding boxes on a panoramic radiograph, confidence metrics, and categorized diagnostic findings.</em>
+</p>
 
 ---
 
